@@ -32,6 +32,11 @@ type CreateRequest struct {
 
 	// 是否为匿名评论（前端明确标识）。
 	IsAnonymous bool `json:"is_anonymous"`
+
+	// 前端经 User-Agent Client Hints 修正后提交的 User-Agent。
+	// Chromium 系浏览器借此区分 Windows 10 / Windows 11（UA 末尾带 |PV: 标记），
+	// 未提供时由后端回退到请求头中的原始 User-Agent。
+	UserAgent *string `json:"user_agent"`
 }
 
 // AdminListRequest 定义了管理员在后台查询评论列表时使用的参数。

@@ -274,14 +274,16 @@ func (h *Handler) Create(c *gin.Context) {
 	ip := util.GetRealClientIP(c)
 	log.Printf("[DEBUG]   最终获取的IP: %s", ip)
 
-	// 获取完整的 User-Agent 信息，包括 UA-CH (User-Agent Client Hints)
-	// 用于准确识别 Windows 11
-	ua := c.Request.UserAgent()
-	uaPlatformVersion := c.GetHeader("Sec-CH-UA-Platform-Version")
-	if uaPlatformVersion != "" {
-		// 将 Platform Version 附加到 UA 字符串中，用特殊标记分隔
-		ua = ua + " |PV:" + uaPlatformVersion
-		log.Printf("[DEBUG]   UA-CH Platform Version: %s", uaPlatformVersion)
+	// 获取 User-Agent。
+	// 优先使用前端通过 User-Agent Client Hints 修正后提交的 user_agent
+	// （Chromium 系浏览器可借此区分 Windows 10 / Windows 11，UA 末尾带 |PV: 标记），
+	// 未提供时回退到请求头中的原始 User-Agent。
+	ua := ""
+	if req.UserAgent != nil {
+		ua = *req.UserAgent
+	}
+	if ua == "" {
+		ua = c.Request.UserAgent()
 	}
 
 	var claims *auth.CustomClaims
