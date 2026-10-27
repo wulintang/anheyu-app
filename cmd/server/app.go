@@ -690,6 +690,7 @@ func NewAppWithOptions(content embed.FS, opts AppOptions) (*App, func(), error) 
 		log.Println("⚠️  警告: 站点URL(SiteURL)未配置，跨域请求将被拒绝。请在后台设置中配置站点URL。")
 	}
 	engine.Use(middleware.Cors())
+	engine.Use(middleware.ClientHints())
 
 	// 设置 SSR 主题检查器（基于数据库状态判断是否应该代理）
 	// 这样即使 SSR 进程还在运行，切换到普通主题后也不会代理
